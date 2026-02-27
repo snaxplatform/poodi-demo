@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>POODi 챗봇 맛보기</title>
+
+  <style>
+    /* =========================
+       SUIT FONT (사용자 제공)
+    ========================= */
+    @font-face {
+      font-family: 'Suit';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Thin.woff2') format('woff2');
+      font-weight: 100;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suit';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraLight.woff2') format('woff2');
+      font-weight: 200;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suit';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Light.woff2') format('woff2');
+      font-weight: 300;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suit';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+      font-weight: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suit';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Medium.woff2') format('woff2');
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suit';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suit';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suit';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraBold.woff2') format('woff2');
+      font-weight: 800;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suit';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Heavy.woff2') format('woff2');
+      font-weight: 900;
+      font-display: swap;
+    }
+
+    :root{
+      --bg:#0b0f1f;
+      --panel:#0f1734;
+      --card:#111a3a;
+      --border: rgba(255,255,255,.10);
+      --text:#ffffff;
+      --muted: rgba(255,255,255,.65);
+      --me: rgba(124, 196, 255, .20);
+      --bot: rgba(255,255,255,.08);
+      --danger: rgba(255, 120, 120, .18);
+      --accent: #7cc4ff;
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family: 'Suit', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(1200px 500px at 20% 0%, rgba(124,196,255,.18), transparent 60%),
+                  radial-gradient(900px 500px at 90% 30%, rgba(167,126,255,.14), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      padding: 18px;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      overflow:hidden;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .brand h1{
+      font-size: 18px;
+      margin:0;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+    .pill{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .sectionTitle{
+      margin-top: 14px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .petList{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+
+    .petCard{
+      display:flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      cursor:pointer;
+      transition: transform .08s ease, background .08s ease, border-color .08s ease;
+      user-select:none;
+    }
+    .petCard:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
+    .petCard.active{
+      background: rgba(124,196,255,.12);
+      border-color: rgba(124,196,255,.45);
+      box-shadow: 0 0 0 2px rgba(124,196,255,.12) inset;
+    }
+
+    .avatar{
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow:hidden;
+      flex: 0 0 46px;
+      background: rgba(255,255,255,.04);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .petInfo{
+      min-width:0;
+      flex:1;
+    }
+    .petNameRow{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .petName{
+      font-size: 15px;
+      font-weight: 800;
+      margin:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .petType{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      white-space:nowrap;
+    }
+    .petMeta{
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+      line-height: 1.35;
+    }
+    .tagRow{
+      margin-top: 6px;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px;
+    }
+    .tag{
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .hintBox{
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    /* Main */
+    .main{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      display:flex;
+      flex-direction:column;
+      min-width: 0;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      min-width:0;
+    }
+    .title h2{
+      margin:0;
+      font-size: 18px;
+      font-weight: 800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .subtitle{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+    }
+    .btn{
+      appearance:none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.92);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .btn:hover{ background: rgba(255,255,255,.09); }
+    .btn.primary{
+      background: rgba(124,196,255,.16);
+      border-color: rgba(124,196,255,.35);
+      color: #eaf6ff;
+    }
+    .btn.primary:hover{ background: rgba(124,196,255,.22); }
+
+    #chat{
+      flex:1;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.10);
+      border-radius: 14px;
+      padding: 14px;
+      overflow:auto;
+      min-height: 340px;
+    }
+
+    .msg{ margin: 10px 0; display:flex; }
+    .msg.me{ justify-content:flex-end; }
+    .bubble{
+      max-width: 78%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: var(--bot);
+      border: 1px solid rgba(255,255,255,.08);
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.45;
+      font-size: 14px;
+    }
+    .msg.me .bubble{
+      background: var(--me);
+      border-color: rgba(124,196,255,.18);
+    }
+    .msg.error .bubble{
+      background: var(--danger);
+      border-color: rgba(255, 120, 120, .25);
+    }
+
+    .composer{
+      margin-top: 12px;
+      display:flex;
+      gap: 10px;
+    }
+    input{
+      flex:1;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color: #fff;
+      outline:none;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    input::placeholder{ color: rgba(255,255,255,.42); }
+
+    .send{
+      min-width: 92px;
+    }
+
+    .quickRow{
+      margin-top: 10px;
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+    }
+    .quick{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color: rgba(255,255,255,.85);
+      cursor:pointer;
+      font-weight: 700;
+    }
+    .quick:hover{ background: rgba(255,255,255,.08); }
+
+    @media (max-width: 980px){
+      .layout{ grid-template-columns: 1fr; }
+      .sidebar{ order: 2; }
+      .main{ order: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>POODi 챗봇 맛보기</h1>
+        <span class="pill">펫 선택</span>
+      </div>
+
+      <div class="sectionTitle">대상 선택</div>
+      <div id="petList" class="petList"></div>
+
+      <div class="hintBox">
+        <b style="color:#fff;">동작 규칙</b><br/>
+        선택한 펫에 대해서만 답변해요.<br/>
+        다른 질문을 하면 “선택한 펫 관련으로 질문해 달라”고 안내합니다.
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2 id="headerTitle">—</h2>
+          <div id="headerSub" class="subtitle">—</div>
+        </div>
+        <div class="actions">
+          <button id="clearBtn" class="btn">대화 지우기</button>
+          <button id="resetBtn" class="btn primary">펫 변경 안내</button>
+        </div>
+      </div>
+
+      <div id="chat"></div>
+
+      <div class="quickRow" id="quickRow"></div>
+
+      <form id="form" class="composer">
+        <input id="input" placeholder="선택한 펫에 대해 물어보세요…" autocomplete="off" />
+        <button id="sendBtn" class="btn primary send" type="submit">전송</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    // =========================
+    // 펫 프로필 (프론트 표시용)
+    // =========================
+    const PETS = [
+      {
+        id: "mungchi",
+        name: "뭉치",
+        type: "강아지 · 시츄 · 남아 · 4세",
+        meta: "피부염이 있어요.",
+        tags: ["피부", "가려움", "샴푸/보습"],
+        quick: ["피부염 관리 루틴 알려줘", "간식은 피부에 뭐가 좋아?", "목욕 주기는 어떻게?"],
+        avatarSvg: avatarDog("#7cc4ff", "SHIHTZU")
+      },
+      {
+        id: "gwangsu",
+        name: "광수",
+        type: "강아지 · 베들링턴 테리어 · 1세",
+        meta: "관절이 안 좋아요.",
+        tags: ["관절", "운동", "영양"],
+        quick: ["관절에 좋은 운동은?", "미끄럼 방지 어떻게 해?", "관절 보조제 기준 알려줘"],
+        avatarSvg: avatarDog("#a77eff", "BEDL")
+      },
+      {
+        id: "loui",
+        name: "루이",
+        type: "고양이 · 러시안블루 · 6세",
+        meta: "기본 건강/식단 상담.",
+        tags: ["식단", "체중", "습관"],
+        quick: ["사료 급여량 기준 알려줘", "물 섭취 늘리는 방법은?", "털 빠짐 관리 팁"],
+        avatarSvg: avatarCat("#5eead4", "RB")
+      },
+    ];
+
+    // 간단한 인라인 SVG 아바타
+    function avatarDog(color, label){
+      return `
+        <svg width="46" height="46" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="${color}" stop-opacity="0.55"/>
+              <stop offset="1" stop-color="#ffffff" stop-opacity="0.08"/>
+            </linearGradient>
+          </defs>
+          <rect x="1" y="1" width="44" height="44" rx="14" fill="url(#g)" stroke="rgba(255,255,255,.16)"/>
+          <circle cx="23" cy="24" r="10" fill="rgba(255,255,255,.22)"/>
+          <circle cx="18" cy="22" r="2" fill="rgba(255,255,255,.9)"/>
+          <circle cx="28" cy="22" r="2" fill="rgba(255,255,255,.9)"/>
+          <path d="M20 27c2 2 4 2 6 0" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M14 18c-2-3 0-6 3-6" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M32 18c2-3 0-6-3-6" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-linecap="round"/>
+          <text x="23" y="40" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.85)" font-family="Suit" font-weight="800">${label}</text>
+        </svg>
+      `;
+    }
+
+    function avatarCat(color, label){
+      return `
+        <svg width="46" height="46" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="${color}" stop-opacity="0.55"/>
+              <stop offset="1" stop-color="#ffffff" stop-opacity="0.08"/>
+            </linearGradient>
+          </defs>
+          <rect x="1" y="1" width="44" height="44" rx="14" fill="url(#g2)" stroke="rgba(255,255,255,.16)"/>
+          <path d="M16 21l-2-4 4 2M30 21l2-4-4 2" fill="rgba(255,255,255,.22)"/>
+          <circle cx="23" cy="25" r="10" fill="rgba(255,255,255,.20)"/>
+          <circle cx="19" cy="24" r="2" fill="rgba(255,255,255,.9)"/>
+          <circle cx="27" cy="24" r="2" fill="rgba(255,255,255,.9)"/>
+          <path d="M21 28c1 1 3 1 4 0" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round"/>
+          <text x="23" y="40" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.85)" font-family="Suit" font-weight="800">${label}</text>
+        </svg>
+      `;
+    }
+
+    // =========================
+    // 상태/DOM
+    // =========================
+    const petListEl = document.getElementById('petList');
+    const chatEl = document.getElementById('chat');
+    const headerTitle = document.getElementById('headerTitle');
+    const headerSub = document.getElementById('headerSub');
+    const quickRow = document.getElementById('quickRow');
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('sendBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let selectedPetId = PETS[0].id;
+
+    function getSelectedPet(){
+      return PETS.find(p => p.id === selectedPetId) || PETS[0];
+    }
+
+    function addMsg(text, who, isError=false) {
+      const row = document.createElement('div');
+      row.className = `msg ${who}${isError ? ' error' : ''}`;
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = text;
+      row.appendChild(bubble);
+      chatEl.appendChild(row);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function setHeader(){
+      const pet = getSelectedPet();
+      headerTitle.textContent = `${pet.name} 상담`;
+      headerSub.textContent = `${pet.type} · ${pet.meta}`;
+      input.placeholder = `${pet.name}에 대해 물어보세요…`;
+    }
+
+    function renderQuick(){
+      const pet = getSelectedPet();
+      quickRow.innerHTML = "";
+      pet.quick.forEach(q => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "quick";
+        b.textContent = q;
+        b.addEventListener("click", () => {
+          input.value = q;
+          input.focus();
+        });
+        quickRow.appendChild(b);
+      });
+    }
+
+    function renderPets(){
+      petListEl.innerHTML = "";
+      PETS.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "petCard" + (p.id === selectedPetId ? " active" : "");
+        card.addEventListener("click", () => {
+          if (selectedPetId === p.id) return;
+          selectedPetId = p.id;
+          renderPets();
+          setHeader();
+          renderQuick();
+          addMsg(`✅ 대상이 "${p.name}"(으)로 변경됐어요.\n이제 ${p.name}에 대해서만 질문해 주세요.`, "bot");
+        });
+
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+        avatar.innerHTML = p.avatarSvg;
+
+        const info = document.createElement("div");
+        info.className = "petInfo";
+        info.innerHTML = `
+          <div class="petNameRow">
+            <p class="petName">${p.name}</p>
+            <span class="petType">${p.type}</span>
+          </div>
+          <div class="petMeta">${p.meta}</div>
+          <div class="tagRow">
+            ${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}
+          </div>
+        `;
+
+        card.appendChild(avatar);
+        card.appendChild(info);
+        petListEl.appendChild(card);
+      });
+    }
+
+    function resetIntro(){
+      const pet = getSelectedPet();
+      addMsg(
+`안녕하세요! 저는 POODi(푸디)예요.
+현재 선택된 대상: ${pet.name}
+
+규칙:
+- ${pet.name}에 대해서만 질문해 주세요.
+- 다른 질문은 “${pet.name} 관련 질문”으로 바꿔달라고 안내할게요.
+
+예시:
+- ${pet.name} 증상/식단/생활습관 상담
+- ${pet.name}에게 맞는 운동/간식/관리 루틴`,
+        "bot"
+      );
+    }
+
+    async function sendMessage(text){
+      const pet = getSelectedPet();
+      sendBtn.disabled = true;
+
+      addMsg(text, 'me');
+
+      // 로딩
+      const loadingRow = document.createElement('div');
+      loadingRow.className = 'msg bot';
+      const loadingBubble = document.createElement('div');
+      loadingBubble.className = 'bubble';
+      loadingBubble.textContent = '답변 중…';
+      loadingRow.appendChild(loadingBubble);
+      chatEl.appendChild(loadingRow);
+      chatEl.scrollTop = chatEl.scrollHeight;
+
+      try{
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ message: text, petId: pet.id })
+        });
+
+        const raw = await res.text();
+        loadingRow.remove();
+
+        if(!res.ok){
+          addMsg(`서버 에러 (${res.status})\n${raw}`, 'bot', true);
+          return;
+        }
+
+        let data;
+        try{ data = JSON.parse(raw); }
+        catch{
+          addMsg(`응답 파싱 실패:\n${raw}`, 'bot', true);
+          return;
+        }
+
+        addMsg(data.reply ?? '(응답이 비어있어요)', 'bot');
+      }catch(err){
+        loadingRow.remove();
+        addMsg(`네트워크/연결 에러:\n${err?.message ?? err}`, 'bot', true);
+      }finally{
+        sendBtn.disabled = false;
+      }
+    }
+
+    // 이벤트
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if(!text) return;
+      input.value = '';
+      sendMessage(text);
+    });
+
+    clearBtn.addEventListener("click", () => {
+      chatEl.innerHTML = "";
+      resetIntro();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      const pet = getSelectedPet();
+      addMsg(`🔁 현재 선택: ${pet.name}\n${pet.name} 관련 질문만 부탁해요!`, "bot");
+    });
+
+    // 초기 렌더
+    renderPets();
+    setHeader();
+    renderQuick();
+    resetIntro();
+  </script>
+</body>
+</html>

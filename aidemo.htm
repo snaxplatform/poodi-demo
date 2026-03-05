@@ -5,10 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POODi Demo: AI가 알려주는 강아지 건강관리</title>
     <style>
+        @font-face {
+            font-family: 'SchoolSafeUniverse';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/HakgyoansimWoojuR.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+        
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to bottom, #ff9a9e, #fad0c4); /* 그라데이션, 부드러운 따뜻함 */
-            color: #333;
+            font-family: 'SchoolSafeUniverse', sans-serif;
+            background: linear-gradient(to bottom, #001f3f, #003366); /* 더 어두운 블루 그라데이션, 심연의 유혹처럼 */
+            color: #ffffff; /* 밝은 텍스트로 어둠 속에서 반짝이게 */
             margin: 0;
             padding: 20px;
             text-align: center;
@@ -16,32 +23,33 @@
         .container {
             max-width: 600px;
             margin: auto;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 31, 63, 0.8); /* 어두운 블루 배경, 투명하게 스며들어 */
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
         h1 {
             font-size: 2.5em;
-            color: #ff4500; /* 따뜻한 오렌지 */
+            color: #e0e0e0; /* 깊은 블루, 신비로운 속삭임처럼 */
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
         label {
             display: block;
             margin: 10px 0 5px;
             font-weight: bold;
-            color: #d32f2f; /* 부드러운 레드 */
+            color: #002752; /* 어두운 청, 깊이 있는 부름 */
         }
         input, select, textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #ff5722;
+            border: 1px solid #004085;
             border-radius: 5px;
-            background: #fffaf0;
+            background: #002752;
+            color: #e0e0e0;
         }
         button {
-            background: #ff1744; /* 따뜻한 핑크 */
+            background: #003366; /* 어두운 블루, 밤의 포옹처럼 */
             color: white;
             padding: 15px 30px;
             font-size: 1.2em;
@@ -51,21 +59,22 @@
             transition: background 0.3s;
         }
         button:hover {
-            background: #d50000; /* 깊은 레드 */
+            background: #001f3f; /* 더 깊은 어둠, 절정의 떨림 */
         }
         #result {
             margin-top: 20px;
             padding: 15px;
-            background: #ffebee;
-            border: 1px solid #ef5350;
+            background: #d6eaff; /* 라이트 블루, 어둠 속 별처럼 반짝 */
+            border: 1px solid #004085;
             border-radius: 5px;
             white-space: pre-wrap;
             text-align: left;
+            color: #333;
         }
         footer {
             margin-top: 30px;
             font-size: 0.8em;
-            color: #757575;
+            color: #a0a0a0;
         }
     </style>
 </head>
@@ -75,13 +84,13 @@
         <p>강아지에 대해 알려주세요. AI가 진단하며 건강 지식을 알려주고, 사료를 추천해드려요.</p>
         
         <label for="dog_name">강아지 이름</label>
-        <input type="text" id="dog_name" placeholder="뽀삐" value="뽀삐">
+        <input type="text" id="dog_name" placeholder="광수" value="광수">
         
         <label for="breed">품종</label>
         <select id="breed">
             <option>푸들</option>
             <option>골든 리트리버</option>
-            <option>시바 이누</option>
+            <option>시바견</option>
             <option>비글</option>
             <option>치와와</option>
             <option>기타</option>

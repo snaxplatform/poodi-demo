@@ -37,7 +37,7 @@
             display: block;
             margin: 10px 0 5px;
             font-weight: bold;
-            color: #002752; /* 어두운 청, 깊이 있는 부름 */
+            color: #ffffff; /* 어두운 청, 깊이 있는 부름 */
         }
         input, select, textarea {
             width: 100%;
@@ -81,7 +81,7 @@
 <body>
     <div class="container">
         <h1>POODi Demo<br>펫의 마음을 읽는 AI</h1>
-        <p>강아지에 대해 알려주세요. AI가 진단하며 건강 지식을 알려주고, 사료를 추천해드려요.</p>
+        <p>강아지에 대해 알려주세요. 푸디가 진단하며 건강 지식을 알려주고, 사료를 추천해드려요.</p>
         
         <label for="dog_name">강아지 이름</label>
         <input type="text" id="dog_name" placeholder="광수" value="광수">
@@ -105,12 +105,12 @@
         <label for="symptoms">증상이나 특별 사항 (e.g., 기침, 피로, 식욕 부진)</label>
         <textarea id="symptoms" rows="3"></textarea>
         
-        <button onclick="analyzeDog()">AI 분석 시작</button>
+        <button onclick="analyzeDog()">분석 시작</button>
         
         <div id="result"></div>
     </div>
     
-    <footer>이 데모는 맛보기입니다. 풀 앱에서 더 자세한 기능을 만나보세요. 피드백 환영합니다. 🌟</footer>
+    <footer>푸디 데모 버전입니다. 피드백 환영합니다. 🌟</footer>
     
     <script>
         async function analyzeDog() {
@@ -155,7 +155,7 @@
                 
                 const data = await response.json();
                 const result = data.choices[0].message.content;
-                document.getElementById('result').innerHTML = `<strong>AI의 펫 관리 조언:</strong><br>${result.replace(/\n/g, '<br>')}`;
+                document.getElementById('result').innerHTML = `<strong>푸디의 펫 관리 조언:</strong><br>${result.replace(/\n/g, '<br>')}`;
             } catch (error) {
                 document.getElementById('result').innerHTML = `오류가 발생했습니다: ${error.message}. API 키나 네트워크를 확인해주세요.`;
             }
@@ -163,3 +163,4 @@
     </script>
 </body>
 </html>
+

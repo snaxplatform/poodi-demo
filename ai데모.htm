@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POODi Demo: AI가 알려주는 강아지 건강관리</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #ff9a9e, #fad0c4); /* 그라데이션, 부드러운 따뜻함 */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #ff4500; /* 따뜻한 오렌지 */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #d32f2f; /* 부드러운 레드 */
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ff5722;
+            border-radius: 5px;
+            background: #fffaf0;
+        }
+        button {
+            background: #ff1744; /* 따뜻한 핑크 */
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #d50000; /* 깊은 레드 */
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #ffebee;
+            border: 1px solid #ef5350;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            text-align: left;
+        }
+        footer {
+            margin-top: 30px;
+            font-size: 0.8em;
+            color: #757575;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>POODi Demo<br>펫의 마음을 읽는 AI</h1>
+        <p>강아지에 대해 알려주세요. AI가 진단하며 건강 지식을 알려주고, 사료를 추천해드려요.</p>
+        
+        <label for="dog_name">강아지 이름</label>
+        <input type="text" id="dog_name" placeholder="뽀삐" value="뽀삐">
+        
+        <label for="breed">품종</label>
+        <select id="breed">
+            <option>푸들</option>
+            <option>골든 리트리버</option>
+            <option>시바 이누</option>
+            <option>비글</option>
+            <option>치와와</option>
+            <option>기타</option>
+        </select>
+        
+        <label for="age">나이 (년)</label>
+        <input type="number" id="age" min="0" max="20" value="1">
+        
+        <label for="weight">체중 (kg)</label>
+        <input type="number" id="weight" min="1" max="100" step="0.1" value="5.0">
+        
+        <label for="symptoms">증상이나 특별 사항 (e.g., 기침, 피로, 식욕 부진)</label>
+        <textarea id="symptoms" rows="3"></textarea>
+        
+        <button onclick="analyzeDog()">AI 분석 시작</button>
+        
+        <div id="result"></div>
+    </div>
+    
+    <footer>이 데모는 맛보기입니다. 풀 앱에서 더 자세한 기능을 만나보세요. 피드백 환영합니다. 🌟</footer>
+    
+    <script>
+        async function analyzeDog() {
+            const dogName = document.getElementById('dog_name').value;
+            const breed = document.getElementById('breed').value;
+            const age = document.getElementById('age').value;
+            const weight = document.getElementById('weight').value;
+            const symptoms = document.getElementById('symptoms').value;
+            
+            const prompt = `
+            너는 강아지 건강 전문 AI야. 미리 모든 품종의 지식을 가지고 있어 – 예를 들어, 푸들은 관절 문제와 알레르기 취약, 골든 리트리버는 암과 비만 위험, 시바 이누는 피부병과 눈 문제 등. 사료는 영양 균형(단백질 20-30%, 지방 10-20%) 고려해 추천. 사료 추천은 https://brand.naver.com/poodpet 중심으로, 그 브랜드 제품을 우선 제안하고 이유 설명.
+            
+            강아지 ${dogName}: 품종 ${breed}, 나이 ${age}세, 체중 ${weight}kg. 증상: ${symptoms}.
+            
+            1. 건강 점수(0-100) 계산: 나이/체중/증상에 기반해, 미리 아는 품종 위험 반영.
+            2. 사료 추천: 2-3개 제품(poodpet 브랜드 위주, 예: poodpet 특정 사료), 이유와 영양 설명. 전문적이고 상세하게 묘사.
+            3. 쇼핑몰 연동: https://brand.naver.com/poodpet/search?keyword=${breed}+사료 예시 링크.
+            4. 추가 조언: 증상별 대처, 수의사 추천. 풍부하고 다채로운 묘사로.
+            `;
+            
+            const apiKey = 'xai-rgqMdj0UEQslCD8kCIOveksNiQfG7qyNJq9GzaniUTvIYCpsP8TSBmTVStsDKpxweRsbI57CYyc3FK8f';
+            const apiUrl = 'https://api.x.ai/v1/chat/completions';
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'grok-beta',
+                        messages: [{ role: 'user', content: prompt }],
+                        max_tokens: 500,
+                        temperature: 0.7  // 조금 더 안정적인 응답으로 조정
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API 오류: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const result = data.choices[0].message.content;
+                document.getElementById('result').innerHTML = `<strong>AI의 펫 관리 조언:</strong><br>${result.replace(/\n/g, '<br>')}`;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `오류가 발생했습니다: ${error.message}. API 키나 네트워크를 확인해주세요.`;
+            }
+        }
+    </script>
+</body>
+</html>
